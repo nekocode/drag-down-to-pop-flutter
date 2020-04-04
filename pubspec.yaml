@@ -1,0 +1,17 @@
+name: drag_down_to_pop
+description: A page transition which supports drag down to pop gesture.
+version: 0.1.0
+homepage: https://github.com/nekocode/drag-down-to-pop-flutter
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
