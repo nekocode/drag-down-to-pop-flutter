@@ -1,6 +1,6 @@
 name: drag_down_to_pop
 description: A page transition which supports drag-down-to-pop gesture.
-version: 0.1.1
+version: 0.2.1
 homepage: https://github.com/nekocode/drag-down-to-pop-flutter
 
 environment:
