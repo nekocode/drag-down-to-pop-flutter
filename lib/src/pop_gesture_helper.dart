@@ -20,34 +20,12 @@ const double _kMinFlingVelocity = 1.0; // Screen heights per second.
 const int _kMaxDroppedSwipePageForwardAnimationTime = 800; // Milliseconds.
 const int _kMaxPageBackAnimationTime = 300; // Milliseconds.
 
-class DragDownToPopPageTransitionsBuilder extends PageTransitionsBuilder {
-  const DragDownToPopPageTransitionsBuilder();
-
-  @override
-  Widget buildTransitions<T>(
-    PageRoute<T> route,
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    return _PageTransition(
-      primaryRouteAnimation: animation,
-      secondaryRouteAnimation: secondaryAnimation,
-      linearTransition: _isPopGestureInProgress(route),
-      child: _BackGestureDetector<T>(
-        enabledCallback: () => _isPopGestureEnabled<T>(route),
-        onStartPopGesture: () => _startPopGesture<T>(route),
-        child: child,
-      ),
-    );
-  }
-
-  static bool _isPopGestureInProgress(PageRoute<dynamic> route) {
+class PopGestureHelper {
+  static bool isPopGestureInProgress(PageRoute<dynamic> route) {
     return route.navigator.userGestureInProgress;
   }
 
-  static bool _isPopGestureEnabled<T>(PageRoute<T> route) {
+  static bool isPopGestureEnabled<T>(PageRoute<T> route) {
     if (route.isFirst) return false;
     if (route.willHandlePopInternally) return false;
     // ignore: invalid_use_of_protected_member
@@ -56,71 +34,22 @@ class DragDownToPopPageTransitionsBuilder extends PageTransitionsBuilder {
     if (route.animation.status != AnimationStatus.completed) return false;
     if (route.secondaryAnimation.status != AnimationStatus.dismissed)
       return false;
-    if (_isPopGestureInProgress(route)) return false;
-
+    if (isPopGestureInProgress(route)) return false;
     return true;
   }
 
-  static _BackGestureController<T> _startPopGesture<T>(PageRoute<T> route) {
-    assert(_isPopGestureEnabled(route));
-
-    return _BackGestureController<T>(
-      navigator: route.navigator,
-      // ignore: invalid_use_of_protected_member
-      controller: route.controller,
-    );
-  }
-}
-
-class _PageTransition extends StatelessWidget {
-  _PageTransition({
-    Key key,
-    @required Animation<double> primaryRouteAnimation,
-    @required Animation<double> secondaryRouteAnimation,
-    @required this.child,
-    @required bool linearTransition,
-  })  : assert(linearTransition != null),
-        _primaryAnimation1 = (linearTransition
-                ? primaryRouteAnimation
-                : CurvedAnimation(
-                    parent: primaryRouteAnimation,
-                    curve: Curves.linearToEaseOut,
-                  ))
-            .drive(Tween<double>(
-          begin: 0.0,
-          end: 1.0,
-        )),
-        _primaryAnimation2 = (linearTransition
-                ? primaryRouteAnimation
-                : CurvedAnimation(
-                    parent: primaryRouteAnimation,
-                    curve: Curves.linearToEaseOut,
-                  ))
-            .drive(Tween<Offset>(
-          begin: Offset(0.0, 0.1),
-          end: Offset(0.0, 0.0),
-        )),
-        super(key: key);
-
-  final Animation<double> _primaryAnimation1;
-  final Animation<Offset> _primaryAnimation2;
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    assert(debugCheckHasDirectionality(context));
-    return FadeTransition(
-      opacity: _primaryAnimation1,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.white,
-        ),
-        child: SlideTransition(
-          position: _primaryAnimation2,
-          child: child,
-        ),
-      ),
+  static Widget buildPopGestureDetector<T>(PageRoute<T> route, Widget child) {
+    return _BackGestureDetector<T>(
+      enabledCallback: () => isPopGestureEnabled<T>(route),
+      onStartPopGesture: () {
+        assert(isPopGestureEnabled(route));
+        return _BackGestureController<T>(
+          navigator: route.navigator,
+          // ignore: invalid_use_of_protected_member
+          controller: route.controller,
+        );
+      },
+      child: child,
     );
   }
 }

@@ -1,3 +1,4 @@
 library drag_down_to_pop;
 
-export 'src/drag_down_to_pop.dart';
+export 'src/page_transition.dart';
+export 'src/pop_gesture_helper.dart';
