@@ -1,6 +1,6 @@
 # drag_down_to_pop
 
-[![build status](https://api.travis-ci.com/nekocode/drag-down-to-pop-flutter.svg)](https://travis-ci.com/nekocode/drag-down-to-pop-flutter)
+[![build status](https://api.travis-ci.com/nekocode/drag-down-to-pop-flutter.svg)](https://travis-ci.com/nekocode/drag-down-to-pop-flutter) [![pub package](https://img.shields.io/pub/v/drag_down_to_pop.svg)](https://pub.dev/packages/drag_down_to_pop)
 
 A page transition which supports drag-down-to-pop gesture. The main source code is copied from the [cupertino/route.dart](https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/cupertino/route.dart) in Flutter SDK with some modification.
 
