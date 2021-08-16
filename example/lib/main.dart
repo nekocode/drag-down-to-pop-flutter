@@ -32,7 +32,7 @@ class FirstPage extends StatelessWidget {
 }
 
 class ImageViewerPageRoute extends MaterialPageRoute {
-  ImageViewerPageRoute({@required WidgetBuilder builder})
+  ImageViewerPageRoute({required WidgetBuilder builder})
       : super(builder: builder, maintainState: false);
 
   @override

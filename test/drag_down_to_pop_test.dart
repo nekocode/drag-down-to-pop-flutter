@@ -155,7 +155,7 @@ void main() {
 
 class DragDownToPopPageRoute extends CupertinoPageRoute<void> {
   DragDownToPopPageRoute(
-      {@required WidgetBuilder builder, RouteSettings settings})
+      {required WidgetBuilder builder, required RouteSettings settings})
       : super(builder: builder, settings: settings, maintainState: false);
 
   @override
