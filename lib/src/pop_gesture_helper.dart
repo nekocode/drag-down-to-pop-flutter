@@ -22,7 +22,7 @@ const int _kMaxPageBackAnimationTime = 300; // Milliseconds.
 
 class PopGestureHelper {
   static bool isPopGestureInProgress(PageRoute<dynamic> route) {
-    return route.navigator.userGestureInProgress;
+    return route.navigator!.userGestureInProgress;
   }
 
   static bool isPopGestureEnabled<T>(PageRoute<T> route) {
@@ -31,8 +31,8 @@ class PopGestureHelper {
     // ignore: invalid_use_of_protected_member
     if (route.hasScopedWillPopCallback) return false;
     if (route.fullscreenDialog) return false;
-    if (route.animation.status != AnimationStatus.completed) return false;
-    if (route.secondaryAnimation.status != AnimationStatus.dismissed)
+    if (route.animation!.status != AnimationStatus.completed) return false;
+    if (route.secondaryAnimation!.status != AnimationStatus.dismissed)
       return false;
     if (isPopGestureInProgress(route)) return false;
     return true;
@@ -56,14 +56,11 @@ class PopGestureHelper {
 
 class _BackGestureDetector<T> extends StatefulWidget {
   const _BackGestureDetector({
-    Key key,
-    @required this.enabledCallback,
-    @required this.onStartPopGesture,
-    @required this.child,
-  })  : assert(enabledCallback != null),
-        assert(onStartPopGesture != null),
-        assert(child != null),
-        super(key: key);
+    Key? key,
+    required this.enabledCallback,
+    required this.onStartPopGesture,
+    required this.child,
+  }) : super(key: key);
 
   final Widget child;
 
@@ -76,8 +73,8 @@ class _BackGestureDetector<T> extends StatefulWidget {
 }
 
 class _BackGestureDetectorState<T> extends State<_BackGestureDetector<T>> {
-  _BackGestureController<T> _backGestureController;
-  VerticalDragGestureRecognizer _recognizer;
+  late _BackGestureController<T> _backGestureController;
+  late VerticalDragGestureRecognizer _recognizer;
   int _lastPointer = -1;
   bool _rejected = false;
 
@@ -99,33 +96,31 @@ class _BackGestureDetectorState<T> extends State<_BackGestureDetector<T>> {
 
   void _handleDragStart(DragStartDetails details) {
     assert(mounted);
-    assert(_backGestureController == null);
+
     _backGestureController = widget.onStartPopGesture();
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
     assert(mounted);
-    assert(_backGestureController != null);
+
     _backGestureController.dragUpdate(
-        _convertToLogical(details.primaryDelta / (context.size.height / 6)));
+        _convertToLogical(details.primaryDelta! / (context.size!.height / 6)));
   }
 
   void _handleDragEnd(DragEndDetails details) {
     assert(mounted);
-    assert(_backGestureController != null);
+
     if (!_rejected) {
       _backGestureController.dragEnd(_convertToLogical(
-          details.velocity.pixelsPerSecond.dy / context.size.height));
+          details.velocity.pixelsPerSecond.dy / context.size!.height));
     } else {
       _backGestureController.dragEnd(0.0, cancel: true);
     }
-    _backGestureController = null;
   }
 
   void _handleDragCancel() {
     assert(mounted);
-    _backGestureController?.dragEnd(0.0, cancel: true);
-    _backGestureController = null;
+    _backGestureController.dragEnd(0.0, cancel: true);
   }
 
   void _handlePointerDown(PointerDownEvent event) {
@@ -150,11 +145,10 @@ class _BackGestureDetectorState<T> extends State<_BackGestureDetector<T>> {
   double _convertToLogical(double value) {
     switch (Directionality.of(context)) {
       case TextDirection.rtl:
-        return -value;
-      case TextDirection.ltr:
         return value;
+      case TextDirection.ltr:
+        return -value;
     }
-    return null;
   }
 
   @override
@@ -187,14 +181,14 @@ class _BackGestureController<T> {
     @required this.controller,
   })  : assert(navigator != null),
         assert(controller != null) {
-    navigator.didStartUserGesture();
+    navigator!.didStartUserGesture();
   }
 
-  final AnimationController controller;
-  final NavigatorState navigator;
+  final AnimationController? controller;
+  final NavigatorState? navigator;
 
   void dragUpdate(double delta) {
-    controller.value -= delta;
+    controller!.value -= delta;
   }
 
   void dragEnd(double velocity, {bool cancel = false}) {
@@ -204,40 +198,40 @@ class _BackGestureController<T> {
     if (velocity.abs() >= _kMinFlingVelocity || cancel)
       animateForward = velocity <= 0;
     else
-      animateForward = controller.value > 0.5;
+      animateForward = controller!.value > 0.5;
 
     if (animateForward) {
       final int droppedPageForwardAnimationTime = min(
-        lerpDouble(
-                _kMaxDroppedSwipePageForwardAnimationTime, 0, controller.value)
+        lerpDouble(_kMaxDroppedSwipePageForwardAnimationTime, 0,
+                controller!.value)!
             .floor(),
         _kMaxPageBackAnimationTime,
       );
-      controller.animateTo(1.0,
+      controller!.animateTo(1.0,
           duration: Duration(milliseconds: droppedPageForwardAnimationTime),
           curve: animationCurve);
     } else {
-      navigator.pop();
+      navigator!.pop();
 
-      if (controller.isAnimating) {
-        final int droppedPageBackAnimationTime = lerpDouble(
-                0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)
+      if (controller!.isAnimating) {
+        final int droppedPageBackAnimationTime = lerpDouble(0,
+                _kMaxDroppedSwipePageForwardAnimationTime, controller!.value)!
             .floor();
-        controller.animateBack(0.0,
+        controller!.animateBack(0.0,
             duration: Duration(milliseconds: droppedPageBackAnimationTime),
             curve: animationCurve);
       }
     }
 
-    if (controller.isAnimating) {
-      AnimationStatusListener animationStatusCallback;
+    if (controller!.isAnimating) {
+      late AnimationStatusListener animationStatusCallback;
       animationStatusCallback = (AnimationStatus status) {
-        navigator.didStopUserGesture();
-        controller.removeStatusListener(animationStatusCallback);
+        navigator!.didStopUserGesture();
+        controller!.removeStatusListener(animationStatusCallback);
       };
-      controller.addStatusListener(animationStatusCallback);
+      controller!.addStatusListener(animationStatusCallback);
     } else {
-      navigator.didStopUserGesture();
+      navigator!.didStopUserGesture();
     }
   }
 }

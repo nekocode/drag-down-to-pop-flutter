@@ -1,9 +1,9 @@
 name: drag_down_to_pop_example
 description: A new Flutter project.
-version: 1.0.0+1
+version: 2.0.0+2
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:

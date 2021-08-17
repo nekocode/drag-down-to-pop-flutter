@@ -25,8 +25,8 @@ class DragDownToPopPageTransitionsBuilder extends PageTransitionsBuilder {
     this.backgroundBuilder,
   });
 
-  final Color backgroundColor;
-  final TransitionBackgroundBuilder backgroundBuilder;
+  final Color? backgroundColor;
+  final TransitionBackgroundBuilder? backgroundBuilder;
 
   @override
   Widget buildTransitions<T>(
@@ -49,15 +49,14 @@ class DragDownToPopPageTransitionsBuilder extends PageTransitionsBuilder {
 
 class SlideAndFadeTransition extends StatelessWidget {
   SlideAndFadeTransition({
-    Key key,
-    @required Animation<double> primaryRouteAnimation,
-    @required Animation<double> secondaryRouteAnimation,
-    @required bool linearTransition,
-    @required this.child,
-    Color backgroundColor,
-    TransitionBackgroundBuilder backgroundBuilder,
-  })  : assert(linearTransition != null),
-        _primaryAnimation1 = (linearTransition
+    Key? key,
+    required Animation<double> primaryRouteAnimation,
+    required Animation<double> secondaryRouteAnimation,
+    required bool linearTransition,
+    required this.child,
+    Color? backgroundColor,
+    TransitionBackgroundBuilder? backgroundBuilder,
+  })  : _primaryAnimation1 = (linearTransition
                 ? primaryRouteAnimation
                 : CurvedAnimation(
                     parent: primaryRouteAnimation,
@@ -88,7 +87,6 @@ class SlideAndFadeTransition extends StatelessWidget {
 
   final Animation<double> _primaryAnimation1;
   final Animation<Offset> _primaryAnimation2;
-
   final TransitionBackgroundBuilder _backgroundBuilder;
   final Widget child;
 
