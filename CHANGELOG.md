@@ -1,3 +1,7 @@
+## 1.0.0
+
+* Add null safety support
+
 ## 0.2.1
 
 * Add arguments to control background of transition
