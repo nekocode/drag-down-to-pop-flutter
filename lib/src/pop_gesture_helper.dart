@@ -188,7 +188,7 @@ class _BackGestureController<T> {
   final NavigatorState? navigator;
 
   void dragUpdate(double delta) {
-    controller!.value -= delta;
+    controller!.value += delta;
   }
 
   void dragEnd(double velocity, {bool cancel = false}) {
